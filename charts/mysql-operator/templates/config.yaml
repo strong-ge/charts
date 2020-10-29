@@ -1,0 +1,92 @@
+{{- $mysql56leadertag := .Values.image.tag -}}
+{{- $mysql57leadertag := .Values.image.tag -}}
+{{- $mysql8leadertag := .Values.image.tag -}}
+
+
+{{- if .Values.image.mysql56.leader -}}
+{{- $mysql56leadertag = .Values.image.mysql56.leader }}
+{{- end -}}
+{{- if .Values.image.mysql57.leader -}}
+{{- $mysql57leadertag = .Values.image.mysql57.leader }}
+{{- end -}}
+{{- if .Values.image.mysql8.leader -}}
+{{- $mysql8leadertag = .Values.image.mysql8.leader }}
+{{- end -}}
+apiVersion: v1
+data:
+  clusterNoLeaderChange: "false"
+  config: |
+    cpuOverRate: {{ .Values.config.cpuOverRate }}
+    memoryOverRate: {{ .Values.config.memoryOverRate }}
+    {{- if .Values.config.commonTolerate }}
+    commonTolerate:
+      {{- toYaml .Values.config.commonTolerate | nindent 6 }}
+    {{- end }}
+    {{- with .Values.config.sysctls}}
+    sysctls:
+    {{- toYaml . | nindent 4}}
+    {{- end }}
+    proxyServiceType: "{{ .Values.config.proxyServiceType }}"
+    proxyIngressVIP: "{{ .Values.config.proxyIngressVIP }}"
+    proxyReplicas: {{ .Values.config.proxyReplicas }}
+    clusterServiceType: "{{ .Values.config.clusterServiceType }}"
+    clusterIngressVIP: "{{ .Values.config.clusterIngressVIP }}"
+    proxyConfigJson: '{{ .Values.config.proxyConfigJson }}'
+    clusterForcedAntiAffinity: {{.Values.config.clusterForcedAntiAffinity}}
+    images:
+    - name: mysql-backup-trigger
+      image: {{ .Values.global.registry }}/{{ .Values.global.repository }}/qfb-backup-job:{{ .Values.image.qfbBackupTag }}
+    clusterConfigs:
+      - name: mysql
+        version: 5.6
+        storageClass: {{.Values.config.mysqlStorageClass}}
+        images:
+          - name: database
+            image: {{ .Values.global.registry }}/{{ .Values.global.repository }}/mysql:{{ .Values.image.mysql56.mysql }}
+          - name: restore
+            image: {{ .Values.global.registry }}/{{ .Values.global.repository }}/qfb-mysql-5.6:{{ .Values.image.mysql56.qfb }}
+          - name: leader
+            image: {{ .Values.global.registry }}/{{ .Values.global.repository }}/mysqlleader:{{ $mysql56leadertag }}
+          {{- if .Values.enablePMMClient }}
+          - name: pmm
+            image: {{ .Values.global.registry }}/{{ .Values.global.repository }}/pmm-client:{{.Values.image.mysql57.pmmClient}}
+          {{- end }}
+      - name: mysql
+        version: 5.7
+        storageClass: {{.Values.config.mysqlStorageClass}}
+        images:
+          - name: database
+            image: {{ .Values.global.registry }}/{{ .Values.global.repository }}/mysql:{{ .Values.image.mysql57.mysql }}
+          - name: restore
+            image: {{ .Values.global.registry }}/{{ .Values.global.repository }}/qfb-mysql-5.7:{{ .Values.image.mysql57.qfb }}
+          - name: leader
+            image: {{ .Values.global.registry }}/{{ .Values.global.repository }}/mysqlleader:{{ $mysql57leadertag }}
+          {{- if .Values.enablePMMClient }}
+          - name: pmm
+            image: {{ .Values.global.registry }}/{{ .Values.global.repository }}/pmm-client:{{.Values.image.mysql57.pmmClient}}
+          {{- end }}
+      - name: mysql
+        version: 8.0
+        storageClass: {{.Values.config.mysqlStorageClass}}
+        images:
+          - name: database
+            image: {{ .Values.global.registry }}/{{ .Values.global.repository }}/mysql:{{ .Values.image.mysql8.mysql }}
+          - name: restore
+            image: {{ .Values.global.registry }}/{{ .Values.global.repository }}/qfb-mysql-8.0:{{ .Values.image.mysql8.qfb }}
+          - name: leader
+            image: {{ .Values.global.registry }}/{{ .Values.global.repository }}/mysqlleader:{{ $mysql8leadertag }}
+          {{- if .Values.enablePMMClient }}
+          - name: pmm
+            image: {{ .Values.global.registry }}/{{ .Values.global.repository }}/pmm-client:{{.Values.image.mysql57.pmmClient}}
+          {{- end }}
+kind: ConfigMap
+metadata:
+  name: app-config
+---
+apiVersion: v1
+data:
+  timezone: |
+    Asia/Shanghai
+kind: ConfigMap
+metadata:
+  name: timezone

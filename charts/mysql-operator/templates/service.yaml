@@ -1,0 +1,14 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mysql-operator
+  labels:
+    app.kubernetes.io/name: mysql-operator
+spec:
+  ports:
+    - port: 8080
+      name: metrics
+  clusterIP: None
+  sessionAffinity: ClientIP
+  selector:
+    app.kubernetes.io/name: mysql-operator

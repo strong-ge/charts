@@ -3,12 +3,12 @@ entries:
   mysql-operator:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2020-10-28T22:55:27.519917+08:00"
+    created: "2020-10-29T13:51:01.393635+08:00"
     description: A MySQL Database Operator Helm chart for Kubernetes
-    digest: 1af311f2a42799d20f0ed2ec75822bfe8471081ce114a28e8c90a52f35068094
+    digest: 4af04d985f61d9f3d3814ed54a4a182d8d670727ec5f5072220ef71d0ed3d530
     name: mysql-operator
     type: application
     urls:
     - mysql-operator-0.1.0.tgz
     version: 0.1.0
-generated: "2020-10-28T22:55:27.51828+08:00"
+generated: "2020-10-29T13:51:01.392908+08:00"
