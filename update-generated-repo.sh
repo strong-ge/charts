@@ -9,4 +9,4 @@ for chart in ../charts/*/; do
     helm package $chart
   fi
 done
-helm repo index ./
+helm repo index --merge index.yaml --url https://grdscloud.github.io/charts/ ./
