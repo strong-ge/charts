@@ -19,8 +19,6 @@ spec:
     plural: mysqlclusters
     singular: mysqlcluster
   scope: Namespaced
-  subresources:
-    status: {}
   validation:
     openAPIV3Schema:
       description: MysqlCluster is the Schema for the mysqlclusters API
@@ -41,38 +39,37 @@ spec:
           description: MysqlClusterSpec defines the desired state of MysqlCluster
           properties:
             clusterSpec:
-              description: clusterSpec
+              description: 'ClusterSpec describes cluster-related attributes, Such
+                as: cluster database version, cluster operation mode'
               properties:
-                image:
-                  description: image definition
-                  type: string
                 matchLabels:
                   additionalProperties:
                     type: string
-                  description: matchLabels definition
+                  description: Map of string keys and values that can be used to organize
+                    and categorize for database instance
                   type: object
                 mode:
-                  description: mode like HACluster, Singleton
+                  description: Mode describes database running mode(HACluster、Singleton)
                   type: string
                 version:
-                  description: version like mysql:5.6, 5.7 oracle:11g, 12c, 19c sql
-                    server:xxx
+                  description: 'Version describes database version(like mysql: 5.6、5.7、8.0)'
                   type: string
+              required:
+                - mode
+                - version
               type: object
-            configTemplate:
-              description: configTemplate name
-              type: string
             customResources:
               additionalProperties:
                 properties:
                   resources:
-                    description: resources include cpu, memory
+                    description: Resources describes the compute resource requirements(include
+                      cpu、memory)
                     properties:
                       limits:
                         additionalProperties:
                           anyOf:
-                          - type: integer
-                          - type: string
+                            - type: integer
+                            - type: string
                           pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                           x-kubernetes-int-or-string: true
                         description: 'Limits describes the maximum amount of compute
@@ -81,8 +78,8 @@ spec:
                       requests:
                         additionalProperties:
                           anyOf:
-                          - type: integer
-                          - type: string
+                            - type: integer
+                            - type: string
                           pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                           x-kubernetes-int-or-string: true
                         description: 'Requests describes the minimum amount of compute
@@ -92,34 +89,42 @@ spec:
                         type: object
                     type: object
                   storage:
-                    description: storages definition
+                    description: Storage describes database persistent volume related
+                      attributes
                     properties:
                       iops:
-                        description: iops
+                        description: Iops describes database persistent volume max
+                          iops
                         format: int64
                         type: integer
                       size:
-                        description: size definition
+                        description: Size describes database persistent volume storage
                         format: int64
                         type: integer
                       storageClass:
-                        description: storageClass definition
+                        description: StorageClass describes database volume storageClass
+                          definition If not specified, use default StorageClass
                         type: string
+                    required:
+                      - size
                     type: object
                 type: object
-              description: customResources
+              description: CustomResources describes custom parameters you can specify
+                a specific database in the cluster to set custom cpu, memory, etc.
               type: object
             databaseResource:
-              description: databaseResource
+              description: DatabaseResource describes the cluster database compute
+                resource requirements
               properties:
                 resources:
-                  description: resources include cpu, memory
+                  description: Resources describes the compute resource requirements(include
+                    cpu、memory)
                   properties:
                     limits:
                       additionalProperties:
                         anyOf:
-                        - type: integer
-                        - type: string
+                          - type: integer
+                          - type: string
                         pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                         x-kubernetes-int-or-string: true
                       description: 'Limits describes the maximum amount of compute
@@ -128,8 +133,8 @@ spec:
                     requests:
                       additionalProperties:
                         anyOf:
-                        - type: integer
-                        - type: string
+                          - type: integer
+                          - type: string
                         pattern: ^(\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))(([KMGTPE]i)|[numkMGTPE]|([eE](\+|-)?(([0-9]+(\.[0-9]*)?)|(\.[0-9]+))))?$
                         x-kubernetes-int-or-string: true
                       description: 'Requests describes the minimum amount of compute
@@ -139,29 +144,60 @@ spec:
                       type: object
                   type: object
                 storage:
-                  description: storages definition
+                  description: Storage describes database persistent volume related
+                    attributes
                   properties:
                     iops:
-                      description: iops
+                      description: Iops describes database persistent volume max iops
                       format: int64
                       type: integer
                     size:
-                      description: size definition
+                      description: Size describes database persistent volume storage
                       format: int64
                       type: integer
                     storageClass:
-                      description: storageClass definition
+                      description: StorageClass describes database volume storageClass
+                        definition If not specified, use default StorageClass
                       type: string
+                  required:
+                    - size
                   type: object
               type: object
             replicas:
-              description: replicas definition
+              description: 'Replicas describes the number of candidates for the master
+                database only one master database in the same time and the other database
+                are standby, Important: master-standby enhanced semi-synchronous replication'
               format: int32
               type: integer
+            restoreSource:
+              description: RestoreSource describes recover data from a data source
+                when creating a cluster ignore this parameter when you don't have
+                a restory source
+              properties:
+                masterSource:
+                  type: boolean
+                remoteBackupSource:
+                  properties:
+                    backupName:
+                      type: string
+                    backupSetUuid:
+                      type: string
+                    kind:
+                      type: string
+                    namespace:
+                      type: string
+                    pointInTime:
+                      type: string
+                  type: object
+              type: object
             slaveReplicas:
-              description: slaveReplicas definition
+              description: 'SlaveReplicas describes the number of slave database,
+                Important: master-slave asynchronous replication'
               format: int32
               type: integer
+          required:
+            - replicas
+            - slaveReplicas
           type: object
         status:
           description: MysqlClusterStatus defines the observed state of MysqlCluster
@@ -216,15 +252,15 @@ spec:
               format: int32
               type: integer
           required:
-          - PermitRollback
-          - replicas
+            - PermitRollback
+            - replicas
           type: object
       type: object
   version: v1
   versions:
-  - name: v1
-    served: true
-    storage: true
+    - name: v1
+      served: true
+      storage: true
 status:
   acceptedNames:
     kind: ""

@@ -1,6 +1,6 @@
-{{- $mysql56leadertag := .Values.image.tag -}}
-{{- $mysql57leadertag := .Values.image.tag -}}
-{{- $mysql8leadertag := .Values.image.tag -}}
+{{- $mysql56leadertag := .Values.image.leaderTag -}}
+{{- $mysql57leadertag := .Values.image.leaderTag -}}
+{{- $mysql8leadertag := .Values.image.leaderTag -}}
 
 
 {{- if .Values.image.mysql56.leader -}}

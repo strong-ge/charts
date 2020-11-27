@@ -8,6 +8,7 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: mysql-operator
+      vendor: grdscloud
   replicas: {{ .Values.replicaCount }}
   template:
     metadata:
@@ -15,25 +16,51 @@ spec:
       labels:
         app.kubernetes.io/name: mysql-operator
         app.kubernetes.io/instance: {{ .Release.Name }}
+        vendor: grdscloud
     spec:
       terminationGracePeriodSeconds: 10
       serviceAccountName: mysql-operator
       containers:
         - name: operator
-          image: {{ .Values.global.registry }}/{{.Values.global.repository}}/{{.Values.image.name}}:{{include "operator.tag" .}}
+          image: {{ .Values.global.registry }}/{{.Values.global.repository}}/mysql-operator:{{include "operator.tag" .}}
           imagePullPolicy: {{ .Values.image.pullPolicy }}
           command:
             - /manager
           args:
             - --enable-leader-election
+            - --use-env-config
           env:
             - name: NAMESPACE
-              value: {{.Release.Namespace}}
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: DATABASE_IMAGE_PREFIX
+              value: {{ .Values.global.registry }}/{{ .Values.global.repository }}/mysql
+            - name: QFB_IMAGE_VERSION
+              value: {{ .Values.image.qfbBackupTag }}
+            - name: BACKUP_TRIGGER_IMAGE
+              value: {{ .Values.global.registry }}/{{ .Values.global.repository }}/qfb-backup-job:{{ .Values.image.qfbBackupTag }}
+            - name: QFB_IMAGE_PREFIX
+              value: {{ .Values.global.registry }}/{{ .Values.global.repository }}/qfb-mysql
+            - name: LEADER_IMAGE
+              value: {{ .Values.global.registry }}/{{ .Values.global.repository }}/mysqlleader:{{.Values.image.leaderTag}}
           volumeMounts:
             - name: localtime
               mountPath: /etc/localtime
             - name: logdir
               mountPath: /var/log/operator
+        - name: apiserver
+          image: {{ .Values.global.registry }}/{{.Values.global.repository}}/apiserver:{{include "apiserver.tag" .}}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - /apiserver
+          env:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: DEBUG
+              value: "true"
       volumes:
         - name: localtime
           hostPath:

@@ -10,10 +10,12 @@ global:
 tag: latest
 enablePMMClient: false
 image:
-  tag: v1.0.0
-  name: mysql-operator
   pullPolicy: IfNotPresent
   qfbBackupTag: v1.0.0
+  leaderTag: v1.0.0
+  operator:
+    operator: v1.0.0
+    apiserver: v1.0.0
   mysql56:
     mysql: 5.6
     qfb: v1.0.0
@@ -66,7 +68,7 @@ affinity:
     requiredDuringSchedulingIgnoredDuringExecution:
       - labelSelector:
           matchLabels:
-            app: database-operator
+            app.kubernetes.io/name: mysql-operator
         topologyKey: kubernetes.io/hostname
 
 ## Deploy CRDs used by Logging Operator.
