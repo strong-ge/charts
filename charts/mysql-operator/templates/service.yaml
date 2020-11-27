@@ -4,11 +4,17 @@ metadata:
   name: mysql-operator
   labels:
     app.kubernetes.io/name: mysql-operator
+    vendor: grdscloud
 spec:
-  ports:
-    - port: 8080
-      name: metrics
-  clusterIP: None
-  sessionAffinity: ClientIP
   selector:
     app.kubernetes.io/name: mysql-operator
+    vendor: grdscloud
+  type: ClusterIP
+  sessionAffinity: None
+  ports:
+    - name: apiserver
+      protocol: TCP
+      port: 8443
+      targetPort: 8443
+    - name: metrics
+      port: 8080

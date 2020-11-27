@@ -1,5 +1,9 @@
 {{- define "operator.tag" -}}
-{{- default .Values.tag .Values.image.tag -}}
+{{- default .Values.tag .Values.image.operator.operator -}}
+{{- end -}}
+
+{{- define "apiserver.tag" -}}
+{{- default .Values.tag .Values.image.operator.apiserver -}}
 {{- end -}}
 
 

@@ -3,12 +3,12 @@ entries:
   mysql-operator:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2020-10-29T14:20:27.85741+08:00"
+    created: "2020-11-27T15:37:49.3915+08:00"
     description: A MySQL Database Operator Helm chart for Kubernetes
-    digest: daf369a07142831817148ef0826e49b126d3ab698c50a5fa93ddb24cc3ce367a
+    digest: d3dad7ae2f6cc332dd2cd7c03ee3032b40dc178fcbbd792b799db475fe2966a0
     name: mysql-operator
     type: application
     urls:
     - https://grdscloud.github.io/charts/mysql-operator-0.1.0.tgz
     version: 0.1.0
-generated: "2020-10-29T14:20:27.856147+08:00"
+generated: "2020-11-27T15:37:49.389074+08:00"
