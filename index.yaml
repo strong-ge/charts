@@ -3,9 +3,9 @@ entries:
   backup-operator:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2020-12-23T09:39:00.835862347Z"
+    created: "2020-12-23T09:45:44.704913041Z"
     description: A Backup Operator Helm chart for Kubernetes
-    digest: 4825db941ba331bc9c6cdda19fe3f02608cd3c942f41ee8994961b8f97cf7c57
+    digest: b55b1b14d6036d75c85051ff6e153874b758fd6bf229b6aa89cea4ae95196eec
     name: backup-operator
     type: application
     urls:
@@ -14,16 +14,16 @@ entries:
   mysql-operator:
   - apiVersion: v2
     appVersion: 1.0.0
-    created: "2020-12-23T09:39:00.836995242Z"
+    created: "2020-12-23T09:45:44.706279953Z"
     dependencies:
     - name: backup-operator
       repository: https://grdscloud.github.io/charts
       version: 0.1.0
     description: A MySQL Database Operator Helm chart for Kubernetes
-    digest: c14500f2844df6b78e658104951b40fbd1177d1627bfaaac23021e9f23e07562
+    digest: 6f997d154b526cdc48064c1eaaac2c75dbb67e72cea2b96ad01d44853f76ca8c
     name: mysql-operator
     type: application
     urls:
     - https://grdscloud.github.io/charts/mysql-operator-0.1.0.tgz
     version: 0.1.0
-generated: "2020-12-23T09:39:00.835199749Z"
+generated: "2020-12-23T09:45:44.704137834Z"
