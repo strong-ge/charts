@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: backup-operator
+  labels:
+    app.kubernetes.io/name: backup-operator
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: backup-operator
+      vendor: grdscloud
+  replicas: {{ .Values.replicaCount }}
+  template:
+    metadata:
+      name: backup-operator
+      labels:
+        app.kubernetes.io/name: backup-operator
+        app.kubernetes.io/instance: {{ .Release.Name }}
+        vendor: grdscloud
+    spec:
+      terminationGracePeriodSeconds: 10
+      serviceAccountName: backup-operator
+      containers:
+        - name: operator
+          image: {{ .Values.global.registry }}/{{.Values.global.repository}}/backup-operator:{{include "operator.tag" .}}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          command:
+            - /manager
+          args:
+            - --enable-leader-election
+            - --use-env-config=true
+          env:
+            - name: NAMESPACE
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.namespace
+            - name: QFB_IMAGE_VERSION
+              value: {{ .Values.image.qfbBackupTag }}
+            - name: BACKUP_TRIGGER_IMAGE
+              value: {{ .Values.global.registry }}/{{ .Values.global.repository }}/qfb-backup-job:{{ .Values.image.qfbBackupTag }}
+          volumeMounts:
+            - name: localtime
+              mountPath: /etc/localtime
+            - name: logdir
+              mountPath: /var/log/operator
+      volumes:
+        - name: localtime
+          hostPath:
+            path: /etc/localtime
+        - name: logdir
+          hostPath:
+            path: /apps/logs/grds/operator/
+            type: DirectoryOrCreate
+      {{- with .Values.nodeSelector }}
+      nodeSelector:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}
