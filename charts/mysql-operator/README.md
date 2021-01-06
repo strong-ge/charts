@@ -1,9 +1,9 @@
 # Installing MySQL operator
 
 ```bash
-helm repo add grdscloud-stable https://grdscloud.github.io/charts/
+helm repo add squids-io-stable https://squids-io.github.io/charts/
 helm repo update
-$ helm install grdscloud-stable/mysql-operator
+$ helm install squids-io-stable/mysql-operator
 ```
 
 ## Configuration

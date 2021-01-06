@@ -10,7 +10,7 @@ for chart in ../charts/*/; do
     helm package -u $chart
   fi
 done
-helm repo index --merge index.yaml --url https://grdscloud.github.io/charts/ ./
+helm repo index --merge index.yaml --url https://squids-io.github.io/charts/ ./
 
 cat > index.html <<EOF
 <html>
