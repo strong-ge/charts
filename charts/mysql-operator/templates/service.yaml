@@ -9,12 +9,17 @@ spec:
   selector:
     app.kubernetes.io/name: mysql-operator
     vendor: grdscloud
-  type: ClusterIP
+  type: {{ .Values.service.type }}
   sessionAffinity: None
   ports:
     - name: apiserver
       protocol: TCP
-      port: 8443
+      port: {{ .Values.service.port }}
       targetPort: 8443
+      {{- if or (eq .Values.service.type "NodePort") (eq .Values.service.type "LoadBalancer") }}
+      {{- if .Values.service.nodePort }}
+      nodePort: {{ .Values.service.nodePort }}
+      {{- end }}
+      {{- end }}
     - name: metrics
       port: 8080
