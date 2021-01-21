@@ -4,8 +4,8 @@
 
 replicaCount: 1
 global:
-  registry: registry.grds.cloud
-  repository: zhujq
+  registry: docker.io
+  repository: squids
 
 tag: latest
 image:
@@ -18,7 +18,7 @@ image:
 nodeSelector: {}
 tolerations:
   - effect: NoSchedule
-    key: grds/node
+    key: squids/node
     operator: Exists
   - effect: NoSchedule
     key: node-role.kubernetes.io/master

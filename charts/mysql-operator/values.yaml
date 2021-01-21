@@ -5,7 +5,7 @@
 replicaCount: 1
 global:
   registry: docker.io
-  repository: grds
+  repository: squids
 
 tag: latest
 enablePMMClient: false
@@ -43,7 +43,7 @@ config:
   proxyReplicas: 2
   clusterServiceType: "nodeport"
   clusterIngressVIP: ""
-  proxyConfigJson: '{"configMapName": "haproxy-ingress-tcp", "configMapNs": "grds", "portStart": 20000, "portEnd": 29999}'
+  proxyConfigJson: '{"configMapName": "haproxy-ingress-tcp", "configMapNs": "squids", "portStart": 20000, "portEnd": 29999}'
   clusterForcedAntiAffinity: false
   sysctls:
 #  - name: net.ipv4.tcp_retries2
@@ -58,7 +58,7 @@ config:
 nodeSelector: {}
 tolerations:
 - effect: NoSchedule
-  key: grds/node
+  key: squids/node
   operator: Exists
 - effect: NoSchedule
   key: node-role.kubernetes.io/master

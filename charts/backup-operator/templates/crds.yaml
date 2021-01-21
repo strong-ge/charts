@@ -6,9 +6,9 @@ metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.3.0
   creationTimestamp: null
-  name: backups.backup.grds.cloud
+  name: backups.backup.squids.io
 spec:
-  group: backup.grds.cloud
+  group: backup.squids.io
   names:
     kind: Backup
     listKind: BackupList
@@ -51,6 +51,20 @@ spec:
                 backupStorageInterface:
                   description: Storage interface to manage backup set.
                   properties:
+                    jfs:
+                      description: JFS storage interface
+                      properties:
+                        awsAccessKey:
+                          type: string
+                        awsSecretKey:
+                          type: string
+                        bucket:
+                          type: string
+                      required:
+                        - awsAccessKey
+                        - awsSecretKey
+                        - bucket
+                      type: object
                     nas:
                       description: NAS storage interface
                       properties:

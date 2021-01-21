@@ -8,7 +8,7 @@ spec:
   selector:
     matchLabels:
       app.kubernetes.io/name: mysql-operator
-      vendor: grdscloud
+      vendor: squids
   replicas: {{ .Values.replicaCount }}
   template:
     metadata:
@@ -16,7 +16,7 @@ spec:
       labels:
         app.kubernetes.io/name: mysql-operator
         app.kubernetes.io/instance: {{ .Release.Name }}
-        vendor: grdscloud
+        vendor: squids
     spec:
       terminationGracePeriodSeconds: 10
       serviceAccountName: mysql-operator
@@ -67,7 +67,7 @@ spec:
             path: /usr/share/zoneinfo/Asia/Shanghai
         - name: logdir
           hostPath:
-            path: /apps/logs/grds/operator/
+            path: /apps/logs/squids/operator/
             type: DirectoryOrCreate
       {{- with .Values.nodeSelector }}
       nodeSelector:

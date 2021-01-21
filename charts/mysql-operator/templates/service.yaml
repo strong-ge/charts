@@ -4,11 +4,11 @@ metadata:
   name: mysql-operator
   labels:
     app.kubernetes.io/name: mysql-operator
-    vendor: grdscloud
+    vendor: squids
 spec:
   selector:
     app.kubernetes.io/name: mysql-operator
-    vendor: grdscloud
+    vendor: squids
   type: {{ .Values.service.type }}
   sessionAffinity: None
   ports:

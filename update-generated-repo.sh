@@ -18,7 +18,7 @@ cat > index.html <<EOF
     <title>Chart repo</title>
 </head>
 <body>
-<h1>Grds Cloud Charts Repo</h1>
+<h1>Squids Charts Repo</h1>
 <p>Point Helm at this repo to see charts.</p>
 </body>
 </html>

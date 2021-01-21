@@ -82,6 +82,7 @@ data:
 kind: ConfigMap
 metadata:
   name: app-config
+  namespace: {{.Release.Namespace}}
 ---
 apiVersion: v1
 data:
@@ -90,3 +91,4 @@ data:
 kind: ConfigMap
 metadata:
   name: timezone
+  namespace: {{.Release.Namespace}}

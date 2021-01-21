@@ -5,14 +5,10 @@ kind: CustomResourceDefinition
 metadata:
   annotations:
     controller-gen.kubebuilder.io/version: v0.3.0
-  name: mysqlclusters.mysql.grds.cloud
-  labels:
-    app.kubernetes.io/name: mysql-operator
-    helm.sh/chart: {{ include "mysql-operator.chart" . }}
-    app.kubernetes.io/instance: {{ .Release.Name }}
-    app.kubernetes.io/managed-by: {{ .Release.Service }}
+  creationTimestamp: null
+  name: mysqlclusters.mysql.squids.io
 spec:
-  group: mysql.grds.cloud
+  group: mysql.squids.io
   names:
     kind: MysqlCluster
     listKind: MysqlClusterList
