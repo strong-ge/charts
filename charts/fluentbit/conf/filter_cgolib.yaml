@@ -1,0 +1,149 @@
+parseConfig:
+  match:
+    matchField:
+      - name: empdirlog
+        key: logpath
+        matchRegex: .*empty-dir.*
+      - name: containerlog
+        key: logpath
+        matchRegex: .*log/containers.*
+      - name: glogContainer
+        key: container_name
+        matchRegex: '(driver-registrar|operator|apiserver)'
+      - name: mycatlog
+        key: tag
+        matchRegex: '.*mycat.*'
+      - name: mysql56log
+        key: k8s/labels/db-branch
+        matchRegex: 'mysql-5.6|mariadb-10.3'
+      - name: mysql57log
+        key: k8s/labels/db-branch
+        matchRegex: 'mysql-5.7'
+      - name: mysqllog
+        key: tag
+        matchRegex: '.*mysql.error.log'
+      - name: mssqllog
+        key: tag
+        matchRegex: '.*mssql.*'
+      - name: slowlog
+        key: logpath
+        matchRegex: '.+slow-query\.log'
+      - name: auditlog
+        key: tag
+        matchRegex: '.+audit\.log'
+      - name: maxscalelog
+        key: tag
+        matchRegex: '.*maxscale.*'
+  parser:
+    parseRegex:
+      - name: getPodUid
+        key: logpath
+        preserve_key: true
+        regex: ".*pods/?(?P<pod_uid>[a-z0-9](?:[-a-z0-9]*[a-z0-9]))?/volumes/.*"
+      - name: getPodName
+        key: logpath
+        preserve_key: true
+        regex: '([^.]+)?/(?P<pod_name>[a-z0-9](?:[-a-z0-9]*[a-z0-9])?(?:\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*)_(?P<namespace_name>[^_]+)_(?P<container_name>.+)-(?P<docker_id>[a-z0-9]{64})\.log$'
+      - name: parseGlog
+        key: log
+        preserve_key: true
+        regex: '(?P<level>[A-Z])(?P<glog_time>[^A-Z]*)  (?P<glog_idx>.) (?P<glog_file>[^:]*):(?P<glog_fileidx>[^\]]*)] (?P<glog_msg>(.|\n|\r)*)'
+      - name: parseMssqlLog
+        key: log
+        regex: ^\s+(?P<origin_time>\d{4}-\d{1,2}-\d{1,2}(\S)+\W(\S)+)(\s+)(?P<content>.*)
+      - name: parseMaxScaleLog
+        key: log
+        regex: '(?P<origin_time>\d+-\d+-\d+\s\d+:\d+:\S+\s)+\s*(?P<logType>\w+)\s*:\s*(?P<content>(.+))'
+    parseK8sUid:
+      - name: getPodInfoByUid
+        key: pod_uid
+    parseK8sName:
+      - name: getPodInfoByName
+        key: pod_name
+        namespaceKey: namespace_name
+    parseJson:
+      - name: externalLog
+        key: log
+        preserve_key: true
+        truncated: true
+    parseTimer:
+      - name: parseMySQL56Time
+        key: time
+        offset: 8
+        time_format: 2006-01-02 15:04:05
+      - name: parseMySQLAuditTime
+        key: timestamp
+        time_format: 2006-01-02T15:04:05 MST
+    parseMySQLSlowLog:
+      - name: parseMySQLSlowLog
+        key: content
+        truncated: true
+    parseMySQLAuditLog:
+      - name: parseMySQLAuditLog
+filters:
+  - name: emptydirGetUid
+    matchType: matchAll
+    matchers:
+      - empdirlog
+    parsers:
+      - getPodUid
+      - getPodInfoByUid
+  - name: kuberLogGetInfo
+    matchType: matchAll
+    matchers:
+      - containerlog
+    parsers:
+      - getPodName
+      - getPodInfoByName
+  - name: externalGlog
+    matchType: matchOne
+    matchers:
+      - glogContainer
+    parsers:
+      - parseGlog
+  - name: mysql56log
+    matchType: matchAll
+    matchers:
+      - mysqllog
+      - mysql56log
+    parsers:
+      - parseMySQL56Time
+  - name: slowLog
+    matchType: matchOne
+    matchers:
+      - slowlog
+    parsers:
+      - parseMySQLSlowLog
+  - name: auditlog
+    matchType: matchOne
+    matchers:
+      - auditlog
+    parsers:
+      - externalLog
+      - parseMySQLAuditLog
+  - name: auditlog56Time
+    matchType: matchAll
+    matchers:
+      - auditlog
+      - mysql56log
+    parsers:
+      - parseMySQLAuditTime
+  - name: auditlog57Time
+    matchType: matchAll
+    matchers:
+      - auditlog
+      - mysql57log
+    parsers:
+      - parseMySQLAuditTime
+  - name: mssqllog
+    matchType: matchAll
+    matchers:
+    - mssqllog
+    parsers:
+    - parseMssqlLog
+  - name: maxscalelog
+    matchType: matchAll
+    matchers:
+      - maxscalelog
+    parsers:
+      - parseMaxScaleLog

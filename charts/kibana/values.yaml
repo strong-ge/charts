@@ -1,0 +1,31 @@
+global:
+  registry: docker.io
+  repository: squids
+
+image:
+  name: kibana
+  pullPolicy: IfNotPresent
+  tag: 6.4.1
+
+nameOverride: ""
+fullnameOverride: ""
+
+service:
+  nodePort: 30064
+
+resources: {}
+
+nodeSelector:
+  node-role.kubernetes.io/master: ""
+
+tolerations:
+  - effect: NoSchedule
+    key: squids/master
+    operator: Exists
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/master
+    operator: Exists
+
+affinity: {}
+
+esurl: http://elasticsearch-logging:9200

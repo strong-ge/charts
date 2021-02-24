@@ -44,6 +44,8 @@ spec:
               value: {{ .Values.global.registry }}/{{ .Values.global.repository }}/qfb-mysql
             - name: LEADER_IMAGE
               value: {{ .Values.global.registry }}/{{ .Values.global.repository }}/mysqlleader:{{.Values.image.leaderTag}}
+            - name: CLUSTER_FORCE_ANTI_AFFINITY
+              value: "true"
           volumeMounts:
             - name: localtime
               mountPath: /etc/localtime

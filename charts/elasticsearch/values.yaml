@@ -1,0 +1,46 @@
+fullnameOverride: ""
+global:
+  registry: docker.io
+  repository: squids
+
+image:
+  pullPolicy: IfNotPresent
+  name: elasticsearch
+  tag: 6.8.7
+
+init:
+  image:
+    pullPolicy: IfNotPresent
+    name: alpine
+    tag: "3.6"
+
+nameOverride: ""
+resources:
+  requests:
+    cpu: 1000m
+affinity: {}
+tolerations:
+- effect: NoSchedule
+  key: squids/master
+  operator: Exists
+- effect: NoSchedule
+  key: node-role.kubernetes.io/master
+  operator: Exists
+nodeSelector:
+  node-role.kubernetes.io/master: ""
+# host path
+dataDirectory: /gaea
+processors: 5
+masterNumber: 2
+javaOpts: "-Xms2g -Xmx2g"
+# 绑定的网卡的名称，有3个特殊值，_local_绑定本地地址，_site_绑定私有地址所在的网卡, _global_绑定公有地址所在的网卡
+networkHost: _site_
+
+cleaner:
+  enabled: true
+  image:
+    pullPolicy: IfNotPresent
+    name: efk-cleaner
+    tag: "1.0"
+  defaultExpire: 30
+  auditlogExpire: 7

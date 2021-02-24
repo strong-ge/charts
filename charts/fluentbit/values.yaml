@@ -1,0 +1,35 @@
+fullnameOverride: ""
+global:
+  registry: docker.io
+  repository: squids
+image:
+  pullPolicy: IfNotPresent
+  name: fluent-bit
+  tag: 1.4.5
+nameOverride: ""
+resources:
+  requests:
+    cpu: "1"
+    memory: 2Gi
+
+database:
+  nodeSelector: {}
+
+k8s:
+  nodeSelector: {}
+
+affinity: {}
+tolerations:
+- effect: NoSchedule
+  key: squids/master
+  operator: Exists
+- effect: NoSchedule
+  key: node-role.kubernetes.io/master
+  operator: Exists
+affinty: {}
+esHost: elasticsearch-logging
+esPort: 9200
+kubeletPodsDir: /var/lib/kubelet/pods
+containerDir: /var/lib/docker/containers
+
+

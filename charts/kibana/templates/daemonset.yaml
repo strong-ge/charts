@@ -1,0 +1,57 @@
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: {{include "kibana.name" . }}
+  namespace: {{ .Release.Namespace }}
+  labels:
+    {{- include "kibana.labels" . | nindent 4}}
+spec:
+  selector:
+    matchLabels:
+      {{- include "kibana.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "kibana.labels" . | nindent 8 }}
+    spec:
+      {{- with .Values.nodeSelector }}
+      nodeSelector: {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.tolerations }}
+      tolerations: {{ toYaml . | nindent 8 }}
+      {{- end }}
+      {{- with .Values.affinity }}
+      affinity: {{ toYaml . | nindent 8 }}
+      {{end}}
+      containers:
+      - name: kibana
+        image: {{include "kibana.image" . }}
+        {{- with .Values.resources }}
+        resources:
+          {{- toYaml . | nindent 10 }}
+        {{- end}}
+        env:
+        - name: SERVER_HOST
+          valueFrom:
+             fieldRef:
+               fieldPath: status.podIP
+        - name: SERVER_NAME
+          valueFrom:
+             fieldRef:
+               fieldPath: spec.nodeName
+        - name: ELASTICSEARCH_URL
+          value: {{.Values.esurl}}
+        - name: XPACK_MONITORING_ENABLED
+          value: 'true'
+        - name: XPACK_SECURITY_ENABLED
+          value: 'false'
+        ports:
+        - containerPort: 5601
+          protocol: TCP
+        volumeMounts:
+        - name: localtime
+          mountPath: /etc/localtime
+      volumes:
+      - name: localtime
+        hostPath:
+          path: /etc/localtime

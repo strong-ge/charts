@@ -35,7 +35,7 @@ config:
   cpuOverRate: 2
   memoryOverRate: 1
   commonTolerate:
-    - key: qfusion/worker
+    - key: squids/worker
       operator: Exists
   proxyServiceType: "nodeport"
   mysqlStorageClass: csi-qcfs
