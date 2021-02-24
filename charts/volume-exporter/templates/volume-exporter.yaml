@@ -1,0 +1,84 @@
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: volume-exporter
+  namespace: {{.Release.Namespace}}
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: ClusterRole
+metadata:
+  name: volume-exporter-default
+rules:
+  - apiGroups: ["*"]
+    resources:
+      - "*"
+    verbs: ["get", "list", "watch"]
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: ClusterRoleBinding
+metadata:
+  name: volume-exporter-default
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: ClusterRole
+  name: volume-exporter-default
+subjects:
+  - kind: ServiceAccount
+    name: volume-exporter
+    namespace: {{.Release.Namespace}}
+---
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: volume-exporter
+  namespace: {{.Release.Namespace}}
+  labels:
+    app.kubernetes.io/name: volume-exporter
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: volume-exporter
+      app.kubernetes.io/instance: RELEASE-NAME
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: volume-exporter
+        app.kubernetes.io/instance: RELEASE-NAME
+    spec:
+      serviceAccountName: "volume-exporter"
+      containers:
+        - name: volume-exporter
+          image: docker.io/squids/squids-exporter:{{ .Values.image.tag }}
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          args:
+            - "--collector.PersistentVolume"
+            - --log.level=debug
+          env:
+            - name: NAMESPACE
+              value: default
+            - name: NODE_NAME
+              valueFrom:
+                fieldRef:
+                  apiVersion: v1
+                  fieldPath: spec.nodeName
+          volumeMounts:
+            - mountPath: /var/lib/kubelet/pods
+              name: varlibkubeletpods
+              mountPropagation: HostToContainer
+            - name: localdir
+              mountPath: /opt/local-path-provisioner
+              readOnly: true
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      volumes:
+        - name: varlibkubeletpods
+          hostPath:
+            path: /var/lib/kubelet/pods
+        - name: localdir
+          hostPath:
+            path: /opt/local-path-provisioner
+      {{- with .Values.tolerations }}
+      tolerations:
+        {{- toYaml . | nindent 8 }}
+      {{- end }}

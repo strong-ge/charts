@@ -1,0 +1,26 @@
+global:
+  registry: docker.io
+  repository: squids
+
+image:
+  pullPolicy: IfNotPresent
+  tag: v0.0.1
+
+replicaCount: 3
+
+nodeSelector: {}
+
+tolerations:
+- effect: NoSchedule
+  key: node-role.kubernetes.io/master
+  operator: Exists
+
+affinity:
+  podAntiAffinity:
+    requiredDuringSchedulingIgnoredDuringExecution:
+      - labelSelector:
+          matchLabels:
+            app.kubernetes.io/name: mysqld-exporter
+        topologyKey: kubernetes.io/hostname
+
+resources: {}

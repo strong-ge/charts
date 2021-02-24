@@ -1,0 +1,14 @@
+global:
+  registry: docker.io
+  repository: squids
+
+image:
+  pullPolicy: IfNotPresent
+  tag: v0.1.0
+
+tolerations:
+  - effect: NoSchedule
+    key: node-role.kubernetes.io/master
+    operator: Exists
+
+resources: {}
