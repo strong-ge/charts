@@ -85,7 +85,7 @@ metadata:
   name: prometheus
   namespace: {{.Release.Namespace}}
   labels:
-    app.kubernetes.io/name: thanos-query
+    app.kubernetes.io/name: prometheus
 spec:
   serviceName: prometheus-headless
   podManagementPolicy: Parallel

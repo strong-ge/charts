@@ -11,7 +11,8 @@ monitorPort: 9090
 replicasCount: 3
 adminPassword: admin
 
-nodeSelector: {}
+nodeSelector:
+  node-role.kubernetes.io/master: ""
 
 tolerations:
   - effect: NoSchedule
@@ -26,11 +27,5 @@ affinity:
             app.kubernetes.io/name: grafana
         topologyKey: kubernetes.io/hostname
 
-resources:
-  requests:
-    memory: "100Mi"
-    cpu: "100m"
-  limits:
-    memory: "2048Mi"
-    cpu: "1024m"
+resources: {}
 

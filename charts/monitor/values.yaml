@@ -19,7 +19,8 @@ prometheusSts:
 
   pvcSize: 200Gi
 
-  nodeSelector: {}
+  nodeSelector:
+    node-role.kubernetes.io/master: ""
 
   tolerations:
   - effect: NoSchedule
@@ -52,7 +53,8 @@ thanosQuery:
   grpcPort: 10901
   replicaCount: 3
 
-  nodeSelector: {}
+  nodeSelector:
+    node-role.kubernetes.io/master: ""
 
   tolerations:
   - effect: NoSchedule
@@ -78,7 +80,8 @@ thanosStore:
   replicaCount: 3
   pvcSize: 10Gi
 
-  nodeSelector: {}
+  nodeSelector:
+    node-role.kubernetes.io/master: ""
 
   tolerations:
   - effect: NoSchedule
@@ -99,7 +102,8 @@ thanosRule:
   replicaCount: 3
   pvcSize: 100Gi
 
-  nodeSelector: {}
+  nodeSelector:
+    node-role.kubernetes.io/master: ""
 
   tolerations:
   - effect: NoSchedule
@@ -123,7 +127,8 @@ thanosCompact:
     resolution1h: 360d
   pvcSize: 100Gi
 
-  nodeSelector: {}
+  nodeSelector:
+    node-role.kubernetes.io/master: ""
 
   tolerations:
   - effect: NoSchedule

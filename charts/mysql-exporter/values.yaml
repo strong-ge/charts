@@ -8,7 +8,8 @@ image:
 
 replicaCount: 3
 
-nodeSelector: {}
+nodeSelector:
+  node-role.kubernetes.io/master: ""
 
 tolerations:
 - effect: NoSchedule
