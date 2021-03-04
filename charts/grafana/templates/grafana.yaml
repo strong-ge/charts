@@ -22,7 +22,7 @@ data:
       type: prometheus
       access: proxy
       orgId: 1
-      url: http://thanos-query.thanos.svc.cluster.local:{{ .Values.monitorPort }}
+      url: http://thanos-query.{{.Release.Namespace}}.svc.cluster.local:{{ .Values.monitorPort }}
       # <bool> enable/disable basic auth
       basicAuth: false
       # <bool> enable/disable with credentials headers
