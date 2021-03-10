@@ -92,3 +92,12 @@ kind: ConfigMap
 metadata:
   name: timezone
   namespace: {{.Release.Namespace}}
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-cluster-config
+  namespace: {{.Release.Namespace}}
+data:
+  "configs": |{{ range .Files.Lines "conf/mysql-cluster-config.yml" }}
+  {{ . }}{{ end }}

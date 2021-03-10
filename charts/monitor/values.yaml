@@ -27,6 +27,8 @@ prometheusSts:
     key: node-role.kubernetes.io/master
     operator: Exists
 
+  kubePKIPath: /etc/kubernetes/pki
+
   affinity:
     podAntiAffinity:
       requiredDuringSchedulingIgnoredDuringExecution:

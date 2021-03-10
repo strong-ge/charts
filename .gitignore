@@ -25,3 +25,7 @@ testbin
 *~
 
 vendor
+
+charts/mysql-operator/Chart.lock
+charts/mysql-operator/charts/
+public/
