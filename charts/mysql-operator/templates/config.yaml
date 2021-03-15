@@ -99,5 +99,6 @@ metadata:
   name: mysql-cluster-config
   namespace: {{.Release.Namespace}}
 data:
-  "configs": |{{ range .Files.Lines "conf/mysql-cluster-config.yml" }}
-  {{ . }}{{ end }}
+  "configs": |
+    {{ range .Files.Lines "conf/mysql-cluster-config.yml" }}
+    {{ . }}{{ end }}
