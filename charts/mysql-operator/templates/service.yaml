@@ -21,5 +21,14 @@ spec:
       nodePort: {{ .Values.service.nodePort }}
       {{- end }}
       {{- end }}
+    - name: apiserver-health
+      protocol: TCP
+      port: {{ .Values.service.healthPort }}
+      targetPort: 80
+      {{- if or (eq .Values.service.type "NodePort") (eq .Values.service.type "LoadBalancer") }}
+      {{- if .Values.service.healthNodePort }}
+      nodePort: {{ .Values.service.healthNodePort }}
+      {{- end }}
+      {{- end }}
     - name: metrics
       port: 8080

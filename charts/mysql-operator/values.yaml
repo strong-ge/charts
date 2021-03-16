@@ -79,3 +79,5 @@ service:
   type: ClusterIP
   port: 8443
   nodePort: ""
+  healthPort: 80
+  healthNodePort: ""
